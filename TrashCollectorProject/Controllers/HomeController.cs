@@ -9,6 +9,7 @@ using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Controllers
 {
+    [ServiceFilter(typeof(GlobalRouting))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

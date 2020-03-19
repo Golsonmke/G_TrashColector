@@ -4,11 +4,14 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TrashCollectorProject.Models;
 
 namespace TrashCollectorProject.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -21,8 +24,18 @@ namespace TrashCollectorProject.Data
                 .HasData(
                 new IdentityRole
                 {
-                    nameof = "Admin",
+                    Name = "Admin",
                     NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Name = "Customer",
+                    NormalizedName = "CUSTOMER"
+                },
+                new IdentityRole
+                {
+                    Name = "Employee",
+                    NormalizedName = "EMPLOYEE"
                 }
                 );
         }

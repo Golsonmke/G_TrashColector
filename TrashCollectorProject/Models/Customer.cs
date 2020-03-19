@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrashCollectorProject.Models
 {
+
     public class Customer
     {
+        [Key]
         public int CutomerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -18,7 +19,9 @@ namespace TrashCollectorProject.Models
         public int AcountBalance { get; set; }
         public string WeeklyPickUpDay { get; set; }
         public bool IsPickedUp { get; set; }
-
+        [ForeignKey("IdentityUser")] 
+        public string IdentityUserId { get; set; }
+        public IdentityUser IdentityUser { get; set; }
         
 
 
