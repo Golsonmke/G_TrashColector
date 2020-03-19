@@ -15,28 +15,30 @@ namespace TrashCollectorProject
         {
             _claimsPrincipal = claimsPrincipal;
         }
-        public void OnActionExicuting(ActionExecutingContext context)
+        public void OnActionExecuting(ActionExecutingContext context)
         {
             var controller = context.RouteData.Values["controller"];
-            if (_claimsPrincipal.IsInRole("Customer"))
+            if (controller.Equals("Home"))
             {
-                context.Result = new RedirectToActionResult("Index",
-                    "Customer", null);
+                if (_claimsPrincipal.IsInRole("Customer"))
+                {
+                    context.Result = new RedirectToActionResult("Index",
+                        "Customer", null);
+                }
+                else if (_claimsPrincipal.IsInRole("Employee"))
+                {
+                    context.Result = new RedirectToActionResult("Index",
+                        "Employees", null);
+                }
             }
-            else if (_claimsPrincipal.IsInRole("Employee"))
-            {
-                context.Result = new RedirectToActionResult("Index",
-                    "Employees", null);
-            }
+
+            
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
 
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

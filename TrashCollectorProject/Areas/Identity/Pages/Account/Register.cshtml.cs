@@ -53,6 +53,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            public string Role { get; set; }
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -67,20 +68,23 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-            [Required]
-            public string Role { get; set; }
+            
+          
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var roles = _roleManager.Roles;
+            Roles = new SelectList(roles, "Name", "Name");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+          
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
