@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +24,13 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index()
+        public  IActionResult Index()
         {
-            var applicationDbContext = _context.Customers.Include(c => c.IdentityUser);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Customer customer;
+            // Get customer where name,accountbalance and Address,ZipCode?
+            customer = _context.Customers.Where(e => e.IdentityUserId == userId).Include(s => s.StreetAddress).Include(z => z.ZipCode).Include(a => a.AcountBalance).SingleOrDefault();
+            return View(customer);
         }
 
         // GET: Customers/Details/5
@@ -51,8 +55,12 @@ namespace TrashCollectorProject.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            Customer customer = new Customer();
-            ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).FirstOrDefault();
+            if (customer == null)
+            {
+                return RedirectToAction("Create");
+            }
             return View(customer);
         }
 
@@ -160,6 +168,6 @@ namespace TrashCollectorProject.Controllers
         {
             return _context.Customers.Any(e => e.CutomerId == id);
         }
-       // public async Task<IActionResult> 
+      
     }
 }

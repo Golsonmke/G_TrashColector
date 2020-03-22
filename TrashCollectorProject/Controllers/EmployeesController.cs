@@ -23,15 +23,13 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //Query employee table for employee object
             var loggedInEmployee = _context.Employees.Where(e => e.IdentityUserId == userId).FirstOrDefault();
             //Query customer table to find all customers whose pickup is today and zipcode matches loggedInEmployee's zipcode, save this as variable todaysPickups
-            //Redo employee view to be a list of customer objects rather than employees
-           //return View(todaysPickusp);
-            return View();
+            var todaysPickUps = _context.Customers.Where(c => c.ZipCode == loggedInEmployee.ZipCode).ToList();
+            return View(todaysPickUps);
         }
 
         // GET: Employees/Details/5
