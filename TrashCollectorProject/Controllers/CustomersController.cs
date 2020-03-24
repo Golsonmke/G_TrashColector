@@ -24,26 +24,25 @@ namespace TrashCollectorProject.Controllers
         }
 
         // GET: Customers
-        public  IActionResult Index()
+        public IActionResult Index()
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Customer customer;
             // Get customer where name,accountbalance and Address,ZipCode?
-            customer = _context.Customers.Where(e => e.IdentityUserId == userId).Include(s => s.StreetAddress).Include(z => z.ZipCode).Include(a => a.AcountBalance).SingleOrDefault();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             return View(customer);
         }
 
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers
+            var customer = _context.Customers
                 .Include(c => c.IdentityUser)
-                .FirstOrDefaultAsync(m => m.CutomerId == id);
+                .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -55,13 +54,9 @@ namespace TrashCollectorProject.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).FirstOrDefault();
-            if (customer == null)
-            {
-                return RedirectToAction("Create");
-            }
-            return View(customer);
+
+            ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
+            return View();
         }
 
         // POST: Customers/Create
@@ -69,10 +64,11 @@ namespace TrashCollectorProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CutomerId,FirstName,LastName,Email,StreetAddress,City,State,ZipCode,AcountBalance,WeeklyPickUpDay,IsPickedUp,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Create([Bind("CustomerId,FirstName,LastName,Email,StreetAddress,City,State,ZipCode,AcountBalance,WeeklyPickUpDay,IsPickedUp,IdentityUserId")] Customer customer)
         {
             if (ModelState.IsValid)
             {
+
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -105,7 +101,7 @@ namespace TrashCollectorProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CutomerId,FirstName,LastName,Email,StreetAddress,City,State,ZipCode,AcountBalance,WeeklyPickUpDay,IsPickedUp,IdentityUserId")] Customer customer)
         {
-            if (id != customer.CutomerId)
+            if (id != customer.CustomerId)
             {
                 return NotFound();
             }
@@ -119,7 +115,7 @@ namespace TrashCollectorProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.CutomerId))
+                    if (!CustomerExists(customer.CustomerId))
                     {
                         return NotFound();
                     }
@@ -144,7 +140,7 @@ namespace TrashCollectorProject.Controllers
 
             var customer = await _context.Customers
                 .Include(c => c.IdentityUser)
-                .FirstOrDefaultAsync(m => m.CutomerId == id);
+                .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -166,7 +162,7 @@ namespace TrashCollectorProject.Controllers
 
         private bool CustomerExists(int id)
         {
-            return _context.Customers.Any(e => e.CutomerId == id);
+            return _context.Customers.Any(e => e.CustomerId == id);
         }
       
     }

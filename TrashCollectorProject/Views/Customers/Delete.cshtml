@@ -72,16 +72,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.IsPickedUp)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdentityUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdentityUser.Id)
-        </dd class>
+      
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="CutomerId" />
+        <input type="hidden" asp-for="CustomerId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
