@@ -26,7 +26,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
         [BindProperty]
-        public InputModel input { get; set; }
+        public InputModel Input { get; set; }
         public SelectList Roles { get; set; }
 
         public RegisterModel(
@@ -42,9 +42,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _roleManager = roleManager;
         }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
+      
 
         public string ReturnUrl { get; set; }
 
@@ -52,8 +50,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            public string Role { get; set; }
+          
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -68,8 +65,9 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-            
-          
+            [Required]
+            public string Role { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -88,6 +86,7 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                user.EmailConfirmed = true;
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -97,26 +96,35 @@ namespace TrashCollectorProject.Areas.Identity.Pages.Account
                     }
                     _logger.LogInformation("User created a new account with password.");
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    if(Input.Role == "Customer")
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                        return RedirectToAction("Create", "Customers");
                     }
-                    else
+                    else if(Input.Role == "Employee")
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return RedirectToAction("Create", "Employees");
                     }
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    //var callbackUrl = Url.Page(
+                    //    "/Account/ConfirmEmail",
+                    //    pageHandler: null,
+                    //    values: new { area = "Identity", userId = user.Id, code = code },
+                    //    protocol: Request.Scheme);
+
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    //{
+                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
+                    //}
+                    //else
+                    //{
+                        
+                    //    return LocalRedirect(returnUrl);
+                    //}
                 }
                 foreach (var error in result.Errors)
                 {

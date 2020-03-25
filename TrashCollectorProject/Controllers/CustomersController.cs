@@ -17,6 +17,7 @@ namespace TrashCollectorProject.Controllers
     public class CustomersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private DateTime DateTime;
 
         public CustomersController(ApplicationDbContext context)
         {
@@ -28,8 +29,8 @@ namespace TrashCollectorProject.Controllers
         {
             // Get customer where name,accountbalance and Address,ZipCode?
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            return View(customer);
+            var loggedInCustomer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            return View(loggedInCustomer);
         }
 
         // GET: Customers/Details/5
@@ -55,6 +56,7 @@ namespace TrashCollectorProject.Controllers
         public IActionResult Create()
         {
 
+
             ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
@@ -64,11 +66,12 @@ namespace TrashCollectorProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerId,FirstName,LastName,Email,StreetAddress,City,State,ZipCode,AcountBalance,WeeklyPickUpDay,IsPickedUp,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Create(Customer customer)
         {
             if (ModelState.IsValid)
             {
-
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                customer.IdentityUserId = userId;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -99,7 +102,7 @@ namespace TrashCollectorProject.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CutomerId,FirstName,LastName,Email,StreetAddress,City,State,ZipCode,AcountBalance,WeeklyPickUpDay,IsPickedUp,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Edit(int id, Customer customer)
         {
             if (id != customer.CustomerId)
             {
