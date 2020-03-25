@@ -29,7 +29,7 @@ namespace TrashCollectorProject.Controllers
         {
             // Get customer where name,accountbalance and Address,ZipCode?
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var loggedInCustomer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            Customer loggedInCustomer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             return View(loggedInCustomer);
         }
 

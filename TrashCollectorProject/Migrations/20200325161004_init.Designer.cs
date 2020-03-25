@@ -10,7 +10,7 @@ using TrashCollectorProject.Data;
 namespace TrashCollectorProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200324141332_init")]
+    [Migration("20200325161004_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,15 +50,15 @@ namespace TrashCollectorProject.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "88a0a331-6d92-4e5c-80fe-d470480d4bad",
-                            ConcurrencyStamp = "328c7a57-f394-4588-9bb5-372f71fb4956",
+                            Id = "e4bea9fe-c36e-43c7-8e48-58fdeb23d6f0",
+                            ConcurrencyStamp = "53cc63e3-3329-449e-956d-3c6cbe4f2802",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "9828fcb6-5e4a-48b7-bfb2-ef685cb1b76e",
-                            ConcurrencyStamp = "ce990458-9771-4b73-8cd5-45722170fa34",
+                            Id = "ccdc061a-8f4a-4e62-a9fd-fef8c5602616",
+                            ConcurrencyStamp = "646e97b1-1bfc-4351-aeca-6b3e496de9f9",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -261,11 +261,20 @@ namespace TrashCollectorProject.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("OneTimePickUp")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StreetAddress")
-                        .HasColumnType("int");
+                    b.Property<string>("StreetAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("SuspendEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("SuspendStart")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("WeeklyPickUpDay")
                         .HasColumnType("nvarchar(max)");
